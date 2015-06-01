@@ -22,6 +22,7 @@ module.exports = (grunt) ->
       src  = do file.src.toString
       dest = do file.dest.toString
       opts = do @options or {}
+      dest = src if dest == 'src'
 
       return cb 'No prefix specified' unless opts.prefix
 
