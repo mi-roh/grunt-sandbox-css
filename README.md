@@ -20,8 +20,10 @@ module.exports = (grunt) ->
                 options:
                     # E.g.: .row -> .foundation .row
                     prefix: '.foundation'
-                    # Selectors where we do not prefix.
+                    # Selectors where we replace instead of prefix. E.g.: body -> .foundation
                     blacklist: [ 'html', 'body' ]
+                    # Selectors where we do not touch. E.g.: .root -> .root
+                    blacklist: [ '.root' ]
 
     grunt.loadNpmTasks('grunt-sandbox-css')
 

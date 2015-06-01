@@ -17,7 +17,7 @@ options =
 combToText = (combinator) ->
   if combinator.text is ' ' then combinator.text else " #{ combinator } "
 
-prefix = (pref, blacklist) -> (selector) ->
+prefix = (pref, blacklist, ignorelist) -> (selector) ->
   output = []
   watchForFollowingElems = false
   hangoverCombinator = null
@@ -45,24 +45,29 @@ prefix = (pref, blacklist) -> (selector) ->
       {elementName, modifiers} = part
       ms = modifiers
       if elementName?.text in blacklist
-        re = new RegExp(elementName.text, 'g')
-        output.push part.text.replace re, pref
+        if elementName?.text in ignorelist
+          output.push part.text
+        else
+          re = new RegExp(elementName.text, 'g')
+          output.push part.text.replace re, pref
         watchForFollowingElems = true
       else if (elementName is null) and ms.length and (any ms, (m) -> m.text in blacklist)
         output.push part.text
       else
         output.push "#{ pref } #{ part }"
-          
+
   output.join('')
 
-exports.css = css = (input, text, blacklist=['html', 'body']) ->
+exports.css = css = (input, text, blacklist=['html', 'body'], ignorelist=[]) ->
 
     output = []
+
+    blackAndIgnoreList = blacklist.concat ignorelist
 
     # Init parser.
     parser = new parserlib.css.Parser options
 
-    process = prefix text, blacklist
+    process = prefix text, blackAndIgnoreList, ignorelist
 
     ruleLine = 0
     lastLine = 1
@@ -151,4 +156,4 @@ exports.css = css = (input, text, blacklist=['html', 'body']) ->
     output.join ''
 
 # Produce a function with its prefix and blacklist preset.
-exports.prefixer = (text, blacklist) -> (input) -> css input, text, blacklist
+exports.prefixer = (text, blacklist, ignorelist) -> (input) -> css input, text, blacklist, ignorelist

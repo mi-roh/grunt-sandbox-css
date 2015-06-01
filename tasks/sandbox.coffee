@@ -35,7 +35,7 @@ module.exports = (grunt) ->
           return cb err if err
 
           # Process it.
-          out = lib.css out, opts.prefix, opts.blacklist
+          out = lib.css out, opts.prefix, opts.blacklist, opts.ignorelist
 
           # Write it.
           fs.writeFile dest, out, (err) ->
